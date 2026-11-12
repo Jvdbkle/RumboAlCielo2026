@@ -1,0 +1,21 @@
+{
+    "name": "jvdbkle/rumbo-al-cielo",
+    "description": "Sistema de reserva de almuerzos Rumbo al Cielo (arquitectura limpia en PHP)",
+    "type": "project",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RumboAlCielo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RumboAlCielo\\Tests\\": "tests/"
+        }
+    }
+}
