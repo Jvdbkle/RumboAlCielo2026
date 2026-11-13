@@ -14,7 +14,7 @@ final class Usuario
     /** HU-01 criterio 4: 3 fallos seguidos bloquean la cuenta 5 minutos. */
     public const MAX_INTENTOS = 3;
     public const MINUTOS_BLOQUEO = 5;
-
+    public const LARGO_MINIMO = 8;
     /** La contraseña se guarda ya cifrada (hash), nunca en texto plano. */
     public function __construct(
         private int $idUsuario,
@@ -154,20 +154,44 @@ final class Usuario
     {
     }
 
-    /** HU-01 criterio 3: al cambiar la contraseña deja de ser primer ingreso. */
+      /**
+     * HU-01 criterio 3: tras cambiar la contraseña deja de ser primer ingreso.
+     * HU-01 criterio 5: debe cumplir la política de seguridad.
+     */
     public function cambiarContrasenia(string $nueva): void
     {
         if (trim($nueva) === '') {
             throw new ReglaDeNegocioException('La nueva contraseña no puede estar vacía.');
         }
+        if (!$this->cumpleRequisitos($nueva)) {
+            throw new ReglaDeNegocioException(
+                'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, '
+                . 'un número y un símbolo especial, y ser distinta de tu teléfono.'
+            );
+        }
         $this->contrasenia = password_hash($nueva, PASSWORD_DEFAULT);
         $this->primerIngreso = false;
     }
 
-    /** HU-02 criterio 1: el teléfono vuelve a ser la contraseña. */
+    /** HU-01 criterio 5. La contraseña inicial (el teléfono) no pasa por aquí. */
+    private function cumpleRequisitos(string $contrasenia): bool
+    {
+        return mb_strlen($contrasenia) >= self::LARGO_MINIMO
+            && preg_match('/\p{Lu}/u', $contrasenia) === 1
+            && preg_match('/\p{Ll}/u', $contrasenia) === 1
+            && preg_match('/\d/', $contrasenia) === 1
+            && preg_match('/[^\p{L}\d\s]/u', $contrasenia) === 1
+            && $contrasenia !== $this->telefono;
+    }
+
+       /**
+     * HU-02 criterio 1: el teléfono vuelve a ser la contraseña.
+     * Como es una clave conocida, se vuelve a exigir el cambio al ingresar (HU-01 criterio 3).
+     */
     public function reestablecerContrasenia(): void
     {
         $this->contrasenia = password_hash($this->telefono, PASSWORD_DEFAULT);
+        $this->primerIngreso = true;
     }
 
     /** HU-03 criterio 2. */

@@ -75,9 +75,9 @@ final class IniciarSesionTest extends TestCase
     /** HU-01 criterio 3: después de cambiar la contraseña ya no se vuelve a pedir. */
     public function test_despues_de_cambiar_la_contrasenia_ya_no_se_pide_el_cambio(): void
     {
-        $this->juan->cambiarContrasenia('nueva-clave');
+        $this->juan->cambiarContrasenia('Clave#2026x');
 
-        $resultado = $this->iniciarSesion->ejecutar(self::CORREO, 'nueva-clave');
+        $resultado = $this->iniciarSesion->ejecutar(self::CORREO, 'Clave#2026x');
 
         $this->assertFalse($resultado->requiereCambioContrasenia);
     }
