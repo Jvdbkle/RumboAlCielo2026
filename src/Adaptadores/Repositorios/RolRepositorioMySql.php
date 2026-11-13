@@ -25,4 +25,9 @@ final class RolRepositorioMySql implements RolRepositorio
         }
         return new Rol((int) $fila['idRol'], $fila['nombreRol']);
     }
+        public function listarTodos(): array
+    {
+        $filas = $this->pdo->query('SELECT idRol, nombreRol FROM rol ORDER BY idRol')->fetchAll();
+        return array_map(fn (array $fila) => new Rol((int) $fila['idRol'], $fila['nombreRol']), $filas);
+    }
 }

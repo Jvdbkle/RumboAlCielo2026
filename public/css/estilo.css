@@ -181,3 +181,230 @@ button:active {
     background: var(--acento);
     border-color: var(--acento);
 }
+
+/* ---------- Pantallas privadas ---------- */
+.marca {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.pagina {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 28px 16px 40px;
+}
+
+.pagina h1 {
+    margin: 0 0 4px;
+    color: var(--azul);
+    font-size: 1.6rem;
+}
+
+.ayuda.izquierda {
+    text-align: left;
+    margin-bottom: 22px;
+}
+
+.modulos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.modulo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid var(--borde);
+    border-top: 4px solid var(--acento);
+    border-radius: 12px;
+    color: var(--texto);
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(23, 38, 80, 0.08);
+    transition: transform 0.1s, box-shadow 0.15s;
+}
+
+.modulo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(23, 38, 80, 0.14);
+}
+
+.modulo strong {
+    color: var(--azul);
+    font-size: 1.1rem;
+}
+
+.modulo span {
+    color: var(--gris);
+    font-size: 0.9rem;
+}
+
+/* ---------- Tablas, botones y avisos ---------- */
+.encabezado-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.boton {
+    display: inline-block;
+    padding: 11px 20px;
+    background: var(--azul);
+    color: #ffffff;
+    border: 1px solid var(--azul);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background: var(--azul-oscuro);
+}
+
+.boton.secundario,
+button.secundario {
+    background: #ffffff;
+    color: var(--azul);
+    border: 1px solid var(--azul);
+}
+
+.boton.secundario:hover,
+button.secundario:hover {
+    background: var(--azul-claro);
+}
+
+button.peligro {
+    background: #ffffff;
+    color: var(--error-texto);
+    border: 1px solid var(--error-borde);
+}
+
+button.peligro:hover {
+    background: var(--error-fondo);
+}
+
+.boton.chico,
+button.chico {
+    width: auto;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+}
+
+.tabla-scroll {
+    overflow-x: auto;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid var(--borde);
+}
+
+.tabla th,
+.tabla td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.94rem;
+}
+
+.tabla th {
+    background: var(--azul-claro);
+    color: var(--azul);
+}
+
+.etiqueta {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.etiqueta.ok {
+    background: var(--verde-claro);
+    color: #065f46;
+}
+
+.etiqueta.baja {
+    background: #fee2e2;
+    color: var(--error-texto);
+}
+
+.acciones {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.acciones form {
+    margin: 0;
+}
+
+.aviso {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.93rem;
+}
+
+.aviso.ok {
+    background: var(--verde-claro);
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
+
+.aviso.error {
+    background: var(--error-fondo);
+    color: var(--error-texto);
+    border-left: 4px solid var(--error-borde);
+}
+
+/* ---------- Formularios ---------- */
+.tarjeta.ancha {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background: #f9fafb;
+    font-size: 1rem;
+}
+
+select:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: var(--azul);
+    box-shadow: 0 0 0 4px var(--azul-claro);
+}
+
+.botones {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 26px;
+}
+
+.botones button {
+    width: auto;
+    margin: 0;
+    padding: 12px 26px;
+}
+
+.botones .boton {
+    padding: 12px 22px;
+}

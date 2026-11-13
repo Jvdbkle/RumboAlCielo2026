@@ -22,4 +22,8 @@ final class RolRepositorioEnMemoria implements RolRepositorio
     {
         return $this->roles[$idRol] ?? null;
     }
+        public function listarTodos(): array
+    {
+        return array_values($this->roles);
+    }
 }

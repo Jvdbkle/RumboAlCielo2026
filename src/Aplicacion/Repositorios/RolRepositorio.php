@@ -9,4 +9,7 @@ use RumboAlCielo\Dominio\Entidades\Rol;
 interface RolRepositorio
 {
     public function buscarPorId(int $idRol): ?Rol;
+
+    /** @return Rol[] Todos los roles del sistema. */
+    public function listarTodos(): array;
 }

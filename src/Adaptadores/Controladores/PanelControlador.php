@@ -16,7 +16,10 @@ final class PanelControlador extends ControladorBase
         $this->guardia->exigirAdministrador();
         $this->render('panel', [
             'titulo' => 'Panel del administrador',
-            'mensaje' => 'Bienvenido. Desde aquí gestionarás usuarios, menús, pensiones y reportes.',
+            'mensaje' => 'Bienvenido. Elige el módulo con el que quieres trabajar.',
+            'modulos' => [
+                ['titulo' => 'Usuarios', 'descripcion' => 'Registrar, editar, deshabilitar y reincorporar usuarios.', 'ruta' => '/administrador/usuarios'],
+            ],
         ]);
     }
 
@@ -25,7 +28,8 @@ final class PanelControlador extends ControladorBase
         $this->guardia->exigirEmpleado();
         $this->render('panel', [
             'titulo' => 'Panel del empleado',
-            'mensaje' => 'Bienvenido. Desde aquí consultarás el menú y reservarás tu almuerzo.',
+            'mensaje' => 'Bienvenido. Elige lo que quieres hacer.',
+            'modulos' => [],
         ]);
     }
 }

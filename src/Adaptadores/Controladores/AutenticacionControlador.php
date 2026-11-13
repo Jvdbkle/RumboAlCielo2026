@@ -28,7 +28,7 @@ final class AutenticacionControlador extends ControladorBase
         $this->render('login', ['error' => '', 'correo' => '']);
     }
 
-       public function iniciarSesion(): void
+         public function iniciarSesion(): void
     {
         $this->exigirTokenValido();
 
@@ -63,7 +63,7 @@ final class AutenticacionControlador extends ControladorBase
         $this->render('cambiar_contrasenia', ['error' => '']);
     }
 
-       public function cambiarContrasenia(): void
+         public function cambiarContrasenia(): void
     {
         $this->guardia->exigirSesion();
         $this->exigirTokenValido();
@@ -79,7 +79,7 @@ final class AutenticacionControlador extends ControladorBase
     }
 
     /** HU-05 criterio 1: finaliza la sesión y redirige a la pantalla de inicio de sesión. */
-        public function cerrarSesion(): void
+         public function cerrarSesion(): void
     {
         $this->guardia->exigirSesion();
         $this->exigirTokenValido();

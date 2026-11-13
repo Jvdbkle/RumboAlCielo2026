@@ -21,7 +21,19 @@ abstract class ControladorBase
         header('Location: ' . $ruta);
         exit;
     }
+    /** Deja un mensaje para mostrarlo en la próxima pantalla (por ejemplo, tras guardar). */
+    protected function avisar(string $tipo, string $texto): void
+    {
+        $_SESSION['aviso'] = ['tipo' => $tipo, 'texto' => $texto];
+    }
 
+    /** @return array{tipo: string, texto: string}|null El mensaje pendiente; se muestra una sola vez. */
+    protected function tomarAviso(): ?array
+    {
+        $aviso = $_SESSION['aviso'] ?? null;
+        unset($_SESSION['aviso']);
+        return is_array($aviso) ? $aviso : null;
+    }
     /** Todo formulario que cambia datos debe llamar a esto antes de actuar (protección CSRF). */
     protected function exigirTokenValido(): void
     {
