@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace RumboAlCielo\Adaptadores\Controladores;
 
 use RumboAlCielo\Aplicacion\CasosDeUso\CambiarContrasenia;
+use RumboAlCielo\Aplicacion\CasosDeUso\CerrarSesion;
 use RumboAlCielo\Aplicacion\CasosDeUso\IniciarSesion;
-use RumboAlCielo\Dominio\Entidades\Rol;
+use RumboAlCielo\Aplicacion\Puertos\Sesion;
 use RumboAlCielo\Dominio\Excepciones\ReglaDeNegocioException;
+use RumboAlCielo\Dominio\Reloj;
 
-/** HU-01 Inicio de sesión y cambio de contraseña: reciben el formulario y llaman al caso de uso. Sin reglas de negocio. */
+/** HU-01 y HU-05: reciben el formulario y llaman al caso de uso. Sin reglas de negocio. */
 final class AutenticacionControlador extends ControladorBase
 {
     public function __construct(
         private IniciarSesion $iniciarSesion,
         private CambiarContrasenia $cambiarContrasenia,
+        private CerrarSesion $cerrarSesion,
+        private Sesion $sesion,
+        private Guardia $guardia,
     ) {
     }
 
@@ -23,8 +28,10 @@ final class AutenticacionControlador extends ControladorBase
         $this->render('login', ['error' => '', 'correo' => '']);
     }
 
-    public function iniciarSesion(): void
+       public function iniciarSesion(): void
     {
+        $this->exigirTokenValido();
+
         $correo = trim((string) ($_POST['correo'] ?? ''));
         $contrasenia = (string) ($_POST['contrasenia'] ?? '');
 
@@ -35,9 +42,11 @@ final class AutenticacionControlador extends ControladorBase
             return;
         }
 
-        session_regenerate_id(true);
-        $_SESSION['idUsuario'] = $resultado->usuario->getIdUsuario();
-        $_SESSION['rol'] = $resultado->rol->getNombreRol();
+        $this->sesion->iniciar(
+            $resultado->usuario->getIdUsuario(),
+            $resultado->rol->getIdRol(),
+            Reloj::ahora(),
+        );
 
         // HU-01 criterio 3: en el primer ingreso se pide cambiar la contraseña.
         if ($resultado->requiereCambioContrasenia) {
@@ -45,38 +54,37 @@ final class AutenticacionControlador extends ControladorBase
         }
 
         // HU-01 criterio 1: cada rol va a su pantalla.
-        $this->redirigirAlPanel();
+        $this->redirigir($this->guardia->rutaDelPanel());
     }
 
     public function mostrarCambioContrasenia(): void
     {
-        $this->exigirSesion();
+        $this->guardia->exigirSesion();
         $this->render('cambiar_contrasenia', ['error' => '']);
     }
 
-    public function cambiarContrasenia(): void
+       public function cambiarContrasenia(): void
     {
-        $this->exigirSesion();
+        $this->guardia->exigirSesion();
+        $this->exigirTokenValido();
 
         try {
-            $this->cambiarContrasenia->ejecutar((int) $_SESSION['idUsuario'], (string) ($_POST['nueva'] ?? ''));
+            $this->cambiarContrasenia->ejecutar((int) $this->sesion->idUsuario(), (string) ($_POST['nueva'] ?? ''));
         } catch (ReglaDeNegocioException $error) {
             $this->render('cambiar_contrasenia', ['error' => $error->getMessage()]);
             return;
         }
 
-        $this->redirigirAlPanel();
+        $this->redirigir($this->guardia->rutaDelPanel());
     }
 
-    private function exigirSesion(): void
+    /** HU-05 criterio 1: finaliza la sesión y redirige a la pantalla de inicio de sesión. */
+        public function cerrarSesion(): void
     {
-        if (!isset($_SESSION['idUsuario'])) {
-            $this->redirigir('/login');
-        }
-    }
+        $this->guardia->exigirSesion();
+        $this->exigirTokenValido();
 
-    private function redirigirAlPanel(): never
-    {
-        $this->redirigir($_SESSION['rol'] === Rol::ADMINISTRADOR ? '/administrador' : '/empleado');
+        $this->cerrarSesion->ejecutar();
+        $this->redirigir('/login');
     }
 }

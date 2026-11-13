@@ -31,11 +31,22 @@ final class Feriado
         return $this->motivo;
     }
 
-    /** HU-15 criterios 1 y 2: la fecha y el motivo son obligatorios. (La fecha repetida la detecta la aplicación.) */
+       public const MOTIVO_MIN = 3;
+    public const MOTIVO_MAX = 100;
+
+    /**
+     * HU-15 criterios 1 y 2: el motivo es obligatorio y tiene entre 3 y 100 caracteres.
+     * (La fecha repetida la detecta la aplicación.)
+     */
     public function registrar(): void
     {
-        if (trim($this->motivo) === '') {
+        $motivo = trim($this->motivo);
+        if ($motivo === '') {
             throw new ReglaDeNegocioException('Debe indicar el motivo del feriado o día sin atención.');
+        }
+        $largo = mb_strlen($motivo);
+        if ($largo < self::MOTIVO_MIN || $largo > self::MOTIVO_MAX) {
+            throw new ReglaDeNegocioException('El motivo debe tener entre 3 y 100 caracteres.');
         }
     }
 

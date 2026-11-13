@@ -167,3 +167,17 @@ button:active {
         padding: 26px 20px 24px;
     }
 }
+
+.salir {
+    width: auto;
+    margin: 0;
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid #ffffff;
+    font-size: 0.9rem;
+}
+
+.salir:hover {
+    background: var(--acento);
+    border-color: var(--acento);
+}

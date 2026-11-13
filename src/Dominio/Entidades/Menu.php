@@ -78,4 +78,9 @@ final class Menu
     {
         return $this->platos[$fecha->format('Y-m-d')] ?? null;
     }
+        /** El lunes de la semana a la que pertenece una fecha (el menú semanal inicia un lunes). */
+    public static function lunesDeLaSemana(DateTimeImmutable $fecha): DateTimeImmutable
+    {
+        return $fecha->setTime(0, 0)->modify('monday this week');
+    }
 }

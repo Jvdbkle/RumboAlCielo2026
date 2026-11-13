@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     idPersona INT NOT NULL,
     correo VARCHAR(150) NOT NULL UNIQUE,
     contrasenia VARCHAR(255) NOT NULL,
-    telefono VARCHAR(20) NOT NULL,
+    telefono VARCHAR(8) NOT NULL,
     estado ENUM('Habilitado', 'Deshabilitado') NOT NULL DEFAULT 'Habilitado',
     idRol INT NOT NULL,
     primerIngreso TINYINT(1) NOT NULL DEFAULT 1,

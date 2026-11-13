@@ -5,21 +5,37 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use RumboAlCielo\Adaptadores\Controladores\AutenticacionControlador;
+use RumboAlCielo\Adaptadores\Controladores\Guardia;
+use RumboAlCielo\Adaptadores\Controladores\PanelControlador;
 use RumboAlCielo\Adaptadores\Repositorios\RolRepositorioMySql;
 use RumboAlCielo\Adaptadores\Repositorios\UsuarioRepositorioMySql;
 use RumboAlCielo\Aplicacion\CasosDeUso\CambiarContrasenia;
+use RumboAlCielo\Aplicacion\CasosDeUso\CerrarSesion;
 use RumboAlCielo\Aplicacion\CasosDeUso\IniciarSesion;
+use RumboAlCielo\Aplicacion\CasosDeUso\VerificarSesion;
 use RumboAlCielo\Infraestructura\BaseDeDatos\Conexion;
+use RumboAlCielo\Infraestructura\Sesion\SesionPhp;
 
+// Cookie de sesión segura: no accesible desde JavaScript y no se envía desde otros sitios.
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
 session_start();
 
-// Se arman las piezas: la conexión, los repositorios, los casos de uso y el controlador.
+// Se arman las piezas: la conexión, los repositorios, los casos de uso y los controladores.
 $pdo = Conexion::obtener();
 $usuarios = new UsuarioRepositorioMySql($pdo);
+$roles = new RolRepositorioMySql($pdo);
+$sesion = new SesionPhp();
+
+$guardia = new Guardia(new VerificarSesion($sesion), $sesion, $roles);
 $autenticacion = new AutenticacionControlador(
-    new IniciarSesion($usuarios, new RolRepositorioMySql($pdo)),
+    new IniciarSesion($usuarios, $roles),
     new CambiarContrasenia($usuarios),
+    new CerrarSesion($sesion),
+    $sesion,
+    $guardia,
 );
+$paneles = new PanelControlador($guardia);
 
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -38,6 +54,15 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'POST /cambiar-contrasenia':
         $autenticacion->cambiarContrasenia();
+        break;
+    case 'POST /cerrar-sesion':
+        $autenticacion->cerrarSesion();
+        break;
+    case 'GET /administrador':
+        $paneles->mostrarAdministrador();
+        break;
+    case 'GET /empleado':
+        $paneles->mostrarEmpleado();
         break;
     default:
         http_response_code(404);

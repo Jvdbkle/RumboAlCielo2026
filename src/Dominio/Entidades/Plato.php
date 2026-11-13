@@ -11,7 +11,7 @@ use RumboAlCielo\Dominio\RegistraEventos;
 final class Plato
 {
     use RegistraEventos;
-
+    public const COMPONENTE_MAX = 100;
     public function __construct(
         private int $idPlato,
         private int $idMenu,
@@ -134,9 +134,13 @@ final class Plato
     private function verificarCompleto(): void
     {
         $componentes = [$this->sopa, $this->platoPrincipal, $this->ensaladaGuarnicion, $this->postre, $this->refresco];
-        foreach ($componentes as $componente) {
+                foreach ($componentes as $componente) {
             if (trim($componente) === '') {
                 throw new ReglaDeNegocioException('Faltan componentes del plato: sopa, plato principal, ensalada o guarnición, postre y refresco.');
+            }
+            // HU-12 criterio 4: cada componente admite como máximo 100 caracteres.
+            if (mb_strlen(trim($componente)) > self::COMPONENTE_MAX) {
+                throw new ReglaDeNegocioException('Cada componente del plato admite como máximo 100 caracteres.');
             }
         }
         if (!$this->validarFoto($this->fotoSopa) || !$this->validarFoto($this->fotoPlatoPrincipal)) {

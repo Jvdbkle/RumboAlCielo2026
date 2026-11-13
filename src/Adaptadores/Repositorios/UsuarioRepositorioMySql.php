@@ -6,9 +6,11 @@ namespace RumboAlCielo\Adaptadores\Repositorios;
 
 use DateTimeImmutable;
 use PDO;
+use PDOException;
 use RumboAlCielo\Aplicacion\Repositorios\UsuarioRepositorio;
 use RumboAlCielo\Dominio\Entidades\Usuario;
 use RumboAlCielo\Dominio\Enumeraciones\EstadoUsuario;
+use RumboAlCielo\Dominio\Excepciones\ReglaDeNegocioException;
 
 final class UsuarioRepositorioMySql implements UsuarioRepositorio
 {
@@ -32,6 +34,13 @@ final class UsuarioRepositorioMySql implements UsuarioRepositorio
         return $this->aEntidad($consulta->fetch());
     }
 
+    /** @return Usuario[] */
+    public function listarTodos(): array
+    {
+        $filas = $this->pdo->query('SELECT ' . self::COLUMNAS . ' FROM usuario ORDER BY idUsuario')->fetchAll();
+        return array_map(fn (array $fila) => $this->aEntidad($fila), $filas);
+    }
+
     /** Guarda un usuario nuevo (id 0) o actualiza uno existente. Devuelve su id. */
     public function guardar(Usuario $usuario): int
     {
@@ -47,21 +56,29 @@ final class UsuarioRepositorioMySql implements UsuarioRepositorio
             'bloqueadoHasta' => $usuario->getBloqueadoHasta()?->format('Y-m-d H:i:s'),
         ];
 
-        if ($usuario->getIdUsuario() === 0) {
-            $this->pdo->prepare(
-                'INSERT INTO usuario (idPersona, correo, contrasenia, telefono, estado, idRol, primerIngreso, intentosFallidos, bloqueadoHasta)
-                 VALUES (:idPersona, :correo, :contrasenia, :telefono, :estado, :idRol, :primerIngreso, :intentosFallidos, :bloqueadoHasta)'
-            )->execute($datos);
-            return (int) $this->pdo->lastInsertId();
-        }
+        try {
+            if ($usuario->getIdUsuario() === 0) {
+                $this->pdo->prepare(
+                    'INSERT INTO usuario (idPersona, correo, contrasenia, telefono, estado, idRol, primerIngreso, intentosFallidos, bloqueadoHasta)
+                     VALUES (:idPersona, :correo, :contrasenia, :telefono, :estado, :idRol, :primerIngreso, :intentosFallidos, :bloqueadoHasta)'
+                )->execute($datos);
+                return (int) $this->pdo->lastInsertId();
+            }
 
-        $datos['idUsuario'] = $usuario->getIdUsuario();
-        $this->pdo->prepare(
-            'UPDATE usuario SET idPersona = :idPersona, correo = :correo, contrasenia = :contrasenia, telefono = :telefono,
-                estado = :estado, idRol = :idRol, primerIngreso = :primerIngreso, intentosFallidos = :intentosFallidos,
-                bloqueadoHasta = :bloqueadoHasta WHERE idUsuario = :idUsuario'
-        )->execute($datos);
-        return $usuario->getIdUsuario();
+            $datos['idUsuario'] = $usuario->getIdUsuario();
+            $this->pdo->prepare(
+                'UPDATE usuario SET idPersona = :idPersona, correo = :correo, contrasenia = :contrasenia, telefono = :telefono,
+                    estado = :estado, idRol = :idRol, primerIngreso = :primerIngreso, intentosFallidos = :intentosFallidos,
+                    bloqueadoHasta = :bloqueadoHasta WHERE idUsuario = :idUsuario'
+            )->execute($datos);
+            return $usuario->getIdUsuario();
+        } catch (PDOException $error) {
+            // Segunda barrera contra correos repetidos: la restricción UNIQUE de la base de datos.
+            if ($error->getCode() === '23000') {
+                throw new ReglaDeNegocioException('El correo ya está registrado.');
+            }
+            throw $error;
+        }
     }
 
     /** @param array<string, mixed>|false $fila */

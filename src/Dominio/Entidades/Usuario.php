@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use RumboAlCielo\Dominio\Enumeraciones\EstadoUsuario;
 use RumboAlCielo\Dominio\Excepciones\ReglaDeNegocioException;
 use RumboAlCielo\Dominio\Reloj;
-
+use RumboAlCielo\Dominio\Validacion\Validador;
 final class Usuario
 {
     /** HU-01 criterio 4: 3 fallos seguidos bloquean la cuenta 5 minutos. */
@@ -30,9 +30,9 @@ final class Usuario
     ) {
     }
 
-    /**
-     * HU-03 criterios 1 y 6: el correo es el login y el teléfono es la primera contraseña;
-     * si falta un dato obligatorio no se crea el usuario.
+       /**
+     * HU-03 criterios 1, 6, 8 y 9: el correo es el login y el teléfono es la primera
+     * contraseña. Si falta un dato o tiene formato inválido no se crea el usuario.
      */
     public static function registrarNuevo(
         int $idUsuario,
@@ -41,9 +41,8 @@ final class Usuario
         string $telefono,
         int $idRol,
     ): self {
-        if (trim($correo) === '' || trim($telefono) === '') {
-            throw new ReglaDeNegocioException('Faltan datos obligatorios: correo y teléfono.');
-        }
+        $correo = Validador::correo($correo);
+        $telefono = Validador::telefono($telefono);
         return new self(
             $idUsuario,
             $idPersona,
@@ -109,14 +108,14 @@ final class Usuario
         return $this->estado === EstadoUsuario::Habilitado;
     }
 
-    public function setCorreo(string $correo): void
+     public function setCorreo(string $correo): void
     {
-        $this->correo = $correo;
+        $this->correo = Validador::correo($correo);
     }
 
     public function setTelefono(string $telefono): void
     {
-        $this->telefono = $telefono;
+        $this->telefono = Validador::telefono($telefono);
     }
 
     /**
