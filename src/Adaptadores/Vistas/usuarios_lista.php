@@ -57,6 +57,11 @@ require __DIR__ . '/partes/encabezado.php';
                             <div class="acciones">
                                 <a class="boton chico secundario" href="/administrador/usuarios/editar?id=<?= $fila->idUsuario ?>">Editar</a>
 
+                                
+                                <?php if ($fila->rol !== 'Administrador'): ?>
+                                    <a class="boton chico secundario" href="/administrador/familiares?empleado=<?= $fila->idUsuario ?>">Familiares</a>
+                                <?php endif; ?>
+                                
                                 <?php if ($habilitado && $fila->idUsuario !== $idActual): ?>
                                     <form method="post" action="/administrador/usuarios/deshabilitar">
                                         <?= TokenCsrf::campo() ?>

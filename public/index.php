@@ -24,6 +24,14 @@ use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarUsuario;
 use RumboAlCielo\Aplicacion\CasosDeUso\VerificarSesion;
 use RumboAlCielo\Infraestructura\BaseDeDatos\Conexion;
 use RumboAlCielo\Infraestructura\Sesion\SesionPhp;
+use RumboAlCielo\Adaptadores\Controladores\FamiliarControlador;
+use RumboAlCielo\Adaptadores\Repositorios\FamiliarRepositorioMySql;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarFamiliar;
+use RumboAlCielo\Aplicacion\CasosDeUso\EditarFamiliar;
+use RumboAlCielo\Aplicacion\CasosDeUso\EliminarFamiliar;
+use RumboAlCielo\Aplicacion\CasosDeUso\ListarFamiliares;
+use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarFamiliar;
+
 
 // Cookie de sesión segura: no accesible desde JavaScript y no se envía desde otros sitios.
 ini_set('session.use_strict_mode', '1');
@@ -35,6 +43,7 @@ $pdo = Conexion::obtener();
 $usuarios = new UsuarioRepositorioMySql($pdo);
 $personas = new PersonaRepositorioMySql($pdo);
 $roles = new RolRepositorioMySql($pdo);
+$familiares = new FamiliarRepositorioMySql($pdo);
 $sesion = new SesionPhp();
 
 $guardia = new Guardia(new VerificarSesion($sesion), $sesion, $roles);
@@ -59,6 +68,15 @@ $gestionUsuarios = new UsuarioControlador(
     new ReestablecerContrasenia($usuarios, $roles),
 );
 
+$gestionFamiliares = new FamiliarControlador(
+    $guardia,
+    new ConsultarUsuario($usuarios, $personas),
+    new ListarFamiliares($familiares, $personas),
+    new RegistrarFamiliar($familiares, $personas, $usuarios, $roles),
+    new ConsultarFamiliar($familiares, $personas),
+    new EditarFamiliar($familiares, $personas),
+    new EliminarFamiliar($familiares),
+);
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -109,6 +127,27 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'POST /administrador/usuarios/restablecer':
         $gestionUsuarios->restablecer();
+        break;
+            case 'GET /administrador/familiares':
+        $gestionFamiliares->listar();
+        break;
+    case 'GET /administrador/familiares/nuevo':
+        $gestionFamiliares->mostrarNuevo();
+        break;
+    case 'POST /administrador/familiares/nuevo':
+        $gestionFamiliares->registrar();
+        break;
+    case 'GET /administrador/familiares/editar':
+        $gestionFamiliares->mostrarEdicion();
+        break;
+    case 'POST /administrador/familiares/editar':
+        $gestionFamiliares->editar();
+        break;
+    case 'GET /administrador/familiares/eliminar':
+        $gestionFamiliares->mostrarConfirmacion();
+        break;
+    case 'POST /administrador/familiares/eliminar':
+        $gestionFamiliares->eliminar();
         break;
     default:
         http_response_code(404);

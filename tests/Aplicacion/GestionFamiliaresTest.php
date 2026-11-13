@@ -16,6 +16,7 @@ use RumboAlCielo\Tests\Dobles\FamiliarRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\PersonaRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\RolRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\UsuarioRepositorioEnMemoria;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarFamiliar;
 
 /** HU-04 Gestión de Familiares y HU-07 Eliminar un familiar (criterios 1 y 3). */
 final class GestionFamiliaresTest extends TestCase
@@ -153,5 +154,31 @@ final class GestionFamiliaresTest extends TestCase
             return $error->getMessage();
         }
         $this->fail('Se esperaba que el sistema rechazara la operación.');
+    }
+        /** HU-04 criterio 3: al abrir un familiar para editarlo se ven sus datos actuales. */
+    public function test_consulta_los_datos_de_un_familiar_activo(): void
+    {
+        $id = $this->registrarFamiliar->ejecutar(self::EMPLEADO_ID, 'María', 'López', 'conyuge');
+
+        $datos = (new ConsultarFamiliar($this->familiares, $this->personas))->ejecutar($id);
+
+        $this->assertSame('María', $datos->nombres);
+        $this->assertSame('López', $datos->apellidos);
+        $this->assertSame('conyuge', $datos->parentesco);
+        $this->assertSame(self::EMPLEADO_ID, $datos->idEmpleado);
+    }
+
+    /** HU-07 criterio 1: un familiar eliminado ya no se puede abrir para editar. */
+    public function test_no_consulta_un_familiar_eliminado(): void
+    {
+        $id = $this->registrarFamiliar->ejecutar(self::EMPLEADO_ID, 'Luis', 'Pérez', 'hijo');
+        (new EliminarFamiliar($this->familiares))->ejecutar($id, true);
+
+        try {
+            (new ConsultarFamiliar($this->familiares, $this->personas))->ejecutar($id);
+            $this->fail('Debió rechazar la consulta de un familiar eliminado.');
+        } catch (ReglaDeNegocioException $error) {
+            $this->assertSame('No se encontró al familiar.', $error->getMessage());
+        }
     }
 }

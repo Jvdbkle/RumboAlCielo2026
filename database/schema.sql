@@ -33,3 +33,13 @@ CREATE TABLE IF NOT EXISTS usuario (
 INSERT IGNORE INTO rol (idRol, nombreRol) VALUES
     (1, 'Administrador'),
     (2, 'Empleado');
+    
+    CREATE TABLE IF NOT EXISTS familiar (
+    idFamiliar INT AUTO_INCREMENT PRIMARY KEY,
+    idPersona INT NOT NULL,
+    idUsuario INT NOT NULL,
+    parentesco ENUM('conyuge', 'hijo', 'hija') NOT NULL,
+    estado ENUM('Activo', 'Eliminado') NOT NULL DEFAULT 'Activo',
+    FOREIGN KEY (idPersona) REFERENCES persona (idPersona),
+    FOREIGN KEY (idUsuario) REFERENCES usuario (idUsuario)
+) ENGINE=InnoDB;

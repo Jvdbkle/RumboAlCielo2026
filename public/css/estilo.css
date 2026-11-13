@@ -279,12 +279,14 @@ button.secundario:hover {
     background: var(--azul-claro);
 }
 
+.boton.peligro,
 button.peligro {
     background: #ffffff;
     color: var(--error-texto);
     border: 1px solid var(--error-borde);
 }
 
+.boton.peligro:hover,
 button.peligro:hover {
     background: var(--error-fondo);
 }
