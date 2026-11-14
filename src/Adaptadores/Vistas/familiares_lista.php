@@ -20,7 +20,7 @@ require __DIR__ . '/partes/encabezado.php';
             </div>
             <div class="acciones">
                 <a class="boton secundario" href="/administrador/usuarios">Volver a usuarios</a>
-                <a class="boton" href="/administrador/familiares/nuevo?empleado=<?= $empleado->idUsuario ?>">Registrar familiar</a>
+               <a class="boton" data-ventana href="/administrador/familiares/nuevo?empleado=<?= $empleado->idUsuario ?>">Registrar familiar</a>
             </div>
         </div>
 
@@ -49,8 +49,8 @@ require __DIR__ . '/partes/encabezado.php';
                         <td><?= htmlspecialchars($fila->parentesco, ENT_QUOTES, 'UTF-8') ?></td>
                         <td>
                             <div class="acciones">
-                                <a class="boton chico secundario" href="/administrador/familiares/editar?id=<?= $fila->idFamiliar ?>">Editar</a>
-                                <a class="boton chico peligro" href="/administrador/familiares/eliminar?id=<?= $fila->idFamiliar ?>">Eliminar</a>
+                                <a class="boton" data-ventana href="/administrador/familiares/nuevo?empleado=<?= $empleado->idUsuario ?>">Registrar familiar</a>
+                                <a class="boton chico peligro" data-ventana href="/administrador/familiares/eliminar?id=<?= $fila->idFamiliar ?>">Eliminar</a>
                             </div>
                         </td>
                     </tr>

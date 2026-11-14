@@ -31,7 +31,19 @@ use RumboAlCielo\Aplicacion\CasosDeUso\EditarFamiliar;
 use RumboAlCielo\Aplicacion\CasosDeUso\EliminarFamiliar;
 use RumboAlCielo\Aplicacion\CasosDeUso\ListarFamiliares;
 use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarFamiliar;
-
+use RumboAlCielo\Adaptadores\Controladores\FeriadoControlador;
+use RumboAlCielo\Adaptadores\Repositorios\FeriadoRepositorioMySql;
+use RumboAlCielo\Aplicacion\CasosDeUso\ListarFeriados;
+use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarFeriado;
+use RumboAlCielo\Adaptadores\Controladores\MenuControlador;
+use RumboAlCielo\Adaptadores\Controladores\PlatoControlador;
+use RumboAlCielo\Adaptadores\Repositorios\MenuRepositorioMySql;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarMenu;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarSemanaDelMenu;
+use RumboAlCielo\Aplicacion\CasosDeUso\EditarPlato;
+use RumboAlCielo\Aplicacion\CasosDeUso\PublicarMenu;
+use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarPlato;
+use RumboAlCielo\Infraestructura\Archivos\AlmacenFotosEnDisco;
 
 // Cookie de sesión segura: no accesible desde JavaScript y no se envía desde otros sitios.
 ini_set('session.use_strict_mode', '1');
@@ -44,6 +56,9 @@ $usuarios = new UsuarioRepositorioMySql($pdo);
 $personas = new PersonaRepositorioMySql($pdo);
 $roles = new RolRepositorioMySql($pdo);
 $familiares = new FamiliarRepositorioMySql($pdo);
+$feriados = new FeriadoRepositorioMySql($pdo);
+$menus = new MenuRepositorioMySql($pdo);
+$fotos = new AlmacenFotosEnDisco(__DIR__ . '/uploads/platos');
 $sesion = new SesionPhp();
 
 $guardia = new Guardia(new VerificarSesion($sesion), $sesion, $roles);
@@ -54,7 +69,13 @@ $autenticacion = new AutenticacionControlador(
     $sesion,
     $guardia,
 );
-$paneles = new PanelControlador($guardia);
+$paneles = new PanelControlador(
+    $guardia,
+    $sesion,
+    new ConsultarUsuario($usuarios, $personas),
+    new ConsultarSemanaDelMenu($menus, $feriados),
+    new ConsultarMenu($menus),
+);
 $gestionUsuarios = new UsuarioControlador(
     $guardia,
     $sesion,
@@ -77,6 +98,21 @@ $gestionFamiliares = new FamiliarControlador(
     new EditarFamiliar($familiares, $personas),
     new EliminarFamiliar($familiares),
 );
+
+$gestionFeriados = new FeriadoControlador(
+    $guardia,
+    new ListarFeriados($feriados),
+    new RegistrarFeriado($feriados),
+    
+);
+$gestionPlatos = new PlatoControlador(
+    $guardia,
+    new ConsultarSemanaDelMenu($menus, $feriados),
+    new RegistrarPlato($menus, $fotos),
+    new EditarPlato($menus, $fotos),
+    new PublicarMenu($menus, $feriados),
+);
+$menuDelEmpleado = new MenuControlador($guardia, new ConsultarMenu($menus));
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -148,6 +184,36 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'POST /administrador/familiares/eliminar':
         $gestionFamiliares->eliminar();
+        break;
+    case 'GET /administrador/feriados':
+        $gestionFeriados->listar();
+        break;
+    case 'GET /administrador/feriados/nuevo':
+        $gestionFeriados->mostrarNuevo();
+        break;
+    case 'POST /administrador/feriados/nuevo':
+        $gestionFeriados->registrar();
+        break;
+            case 'GET /administrador/menu':
+        $gestionPlatos->semana();
+        break;
+    case 'POST /administrador/menu/publicar':
+        $gestionPlatos->publicar();
+        break;
+    case 'GET /administrador/platos/nuevo':
+        $gestionPlatos->mostrarNuevo();
+        break;
+    case 'POST /administrador/platos/nuevo':
+        $gestionPlatos->registrar();
+        break;
+    case 'GET /administrador/platos/editar':
+        $gestionPlatos->mostrarEdicion();
+        break;
+    case 'POST /administrador/platos/editar':
+        $gestionPlatos->editar();
+        break;
+    case 'GET /empleado/menu':
+        $menuDelEmpleado->mostrar();
         break;
     default:
         http_response_code(404);

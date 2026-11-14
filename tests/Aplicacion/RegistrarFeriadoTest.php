@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarFeriado;
 use RumboAlCielo\Dominio\Excepciones\ReglaDeNegocioException;
 use RumboAlCielo\Tests\Dobles\FeriadoRepositorioEnMemoria;
+use RumboAlCielo\Aplicacion\CasosDeUso\ListarFeriados;
+
 
 /** HU-15 Registrar feriados y días sin atención. */
 final class RegistrarFeriadoTest extends TestCase
@@ -65,7 +67,17 @@ final class RegistrarFeriadoTest extends TestCase
         }
         $this->assertSame(0, count($this->feriados->listarTodos()));
     }
+    public function test_lista_los_dias_sin_atencion_ordenados_por_fecha(): void
+    {
+        $this->registrarFeriado->ejecutar('2026-12-25', 'Navidad');
+        $this->registrarFeriado->ejecutar('2026-11-19', 'Día de la Patria');
 
+        $lista = (new ListarFeriados($this->feriados))->ejecutar();
+
+        $this->assertSame(2, count($lista));
+        $this->assertSame('Día de la Patria', $lista[0]->getMotivo());
+        $this->assertSame('Navidad', $lista[1]->getMotivo());
+    }
     private function mensajeDeError(callable $accion): string
     {
         try {

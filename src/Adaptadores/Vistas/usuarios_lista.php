@@ -18,7 +18,7 @@ require __DIR__ . '/partes/encabezado.php';
                 <h1>Usuarios</h1>
                 <p class="ayuda izquierda">Usuarios registrados en el sistema y su estado.</p>
             </div>
-            <a class="boton" href="/administrador/usuarios/nuevo">Registrar usuario</a>
+            <a class="boton" data-ventana href="/administrador/usuarios/nuevo">Registrar usuario</a>
         </div>
 
         <?php if ($aviso !== null): ?>
@@ -55,8 +55,8 @@ require __DIR__ . '/partes/encabezado.php';
                         </td>
                         <td>
                             <div class="acciones">
-                                <a class="boton chico secundario" href="/administrador/usuarios/editar?id=<?= $fila->idUsuario ?>">Editar</a>
-
+                                <a class="boton chico secundario" data-ventana href="/administrador/usuarios/editar?id=<?= $fila->idUsuario ?>">Editar</a>
+                               
                                 
                                 <?php if ($fila->rol !== 'Administrador'): ?>
                                     <a class="boton chico secundario" href="/administrador/familiares?empleado=<?= $fila->idUsuario ?>">Familiares</a>

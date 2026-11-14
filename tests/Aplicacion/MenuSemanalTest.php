@@ -16,6 +16,8 @@ use RumboAlCielo\Dominio\Reloj;
 use RumboAlCielo\Tests\Dobles\AlmacenFotosEnMemoria;
 use RumboAlCielo\Tests\Dobles\FeriadoRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\MenuRepositorioEnMemoria;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarSemanaDelMenu;
+
 
 /** HU-13 Armar y publicar el menú semanal y HU-14 Consultar el menú de la semana. */
 final class MenuSemanalTest extends TestCase
@@ -127,6 +129,32 @@ final class MenuSemanalTest extends TestCase
         $this->assertSame('', $this->consultarMenu->ejecutar()->aviso);
     }
 
+        /** HU-13 criterio 1: el administrador ve los cuatro días de la semana con su plato y si está publicada. */
+    public function test_el_administrador_ve_los_cuatro_dias_con_su_plato_y_los_feriados(): void
+    {
+        $this->registrar('2026-11-17', 'Sopa de maní');
+        (new RegistrarFeriado($this->feriados))->ejecutar('2026-11-19', 'Día de la Patria');
+
+        $semana = (new ConsultarSemanaDelMenu($this->menus, $this->feriados))->ejecutar(new DateTimeImmutable('2026-11-18'));
+
+        $this->assertSame('2026-11-16', $semana->lunes->format('Y-m-d'));
+        $this->assertSame(4, count($semana->dias));
+        $this->assertSame(null, $semana->dias[0]->plato, 'El lunes todavía no tiene plato.');
+        $this->assertSame('Sopa de maní', $semana->dias[1]->plato->sopa);
+        $this->assertSame('Día de la Patria', $semana->dias[3]->motivoFeriado);
+        $this->assertTrue($semana->tienePlatos());
+        $this->assertFalse($semana->publicado);
+    }
+
+    /** HU-13 criterio 1: una semana sin platos muestra los cuatro días vacíos y no se puede publicar. */
+    public function test_una_semana_sin_platos_muestra_los_cuatro_dias_vacios(): void
+    {
+        $semana = (new ConsultarSemanaDelMenu($this->menus, $this->feriados))->ejecutar();
+
+        $this->assertSame(4, count($semana->dias));
+        $this->assertFalse($semana->tienePlatos());
+        $this->assertFalse($semana->publicado);
+    }
     /** Un menú con platos pero sin publicar no se muestra al empleado. */
     public function test_un_menu_sin_publicar_no_muestra_sus_platos(): void
     {

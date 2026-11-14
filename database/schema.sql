@@ -43,3 +43,29 @@ INSERT IGNORE INTO rol (idRol, nombreRol) VALUES
     FOREIGN KEY (idPersona) REFERENCES persona (idPersona),
     FOREIGN KEY (idUsuario) REFERENCES usuario (idUsuario)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS feriado (
+    idFeriado INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL UNIQUE,
+    motivo VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS menu (
+    idMenu INT AUTO_INCREMENT PRIMARY KEY,
+    fechaInicio DATE NOT NULL UNIQUE,
+    estado ENUM('Pendiente', 'Publicado') NOT NULL DEFAULT 'Pendiente'
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS plato (
+    idPlato INT AUTO_INCREMENT PRIMARY KEY,
+    idMenu INT NOT NULL,
+    fecha DATE NOT NULL UNIQUE,
+    sopa VARCHAR(100) NOT NULL,
+    platoPrincipal VARCHAR(100) NOT NULL,
+    ensaladaGuarnicion VARCHAR(100) NOT NULL,
+    postre VARCHAR(100) NOT NULL,
+    refresco VARCHAR(100) NOT NULL,
+    fotoSopa VARCHAR(255) NOT NULL,
+    fotoPlatoPrincipal VARCHAR(255) NOT NULL,
+    FOREIGN KEY (idMenu) REFERENCES menu (idMenu)
+) ENGINE=InnoDB;
