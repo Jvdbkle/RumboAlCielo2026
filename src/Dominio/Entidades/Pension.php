@@ -97,7 +97,10 @@ final class Pension
     {
         return $this->estado === EstadoPension::Activa;
     }
-
+    public function estaRechazada(): bool
+    {
+        return $this->estado === EstadoPension::Rechazada;
+    }
     public function estaPendiente(): bool
     {
         return $this->estado === EstadoPension::Pendiente;

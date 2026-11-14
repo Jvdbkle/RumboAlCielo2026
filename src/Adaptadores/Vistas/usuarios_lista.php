@@ -10,16 +10,15 @@
 use RumboAlCielo\Infraestructura\Seguridad\TokenCsrf;
 
 $titulo = 'Usuarios';
+$enlacesVolver = [['Volver al panel', '/administrador']];
+$sobreTitulo = 'Administración';
+$tituloPagina = 'Usuarios';
+$subtituloPagina = 'Usuarios registrados en el sistema y su estado.';
+$accionPagina = ['texto' => 'Registrar usuario', 'href' => '/administrador/usuarios/nuevo', 'ventana' => true];
 require __DIR__ . '/partes/encabezado.php';
 ?>
     <main class="pagina">
-        <div class="encabezado-pagina">
-            <div>
-                <h1>Usuarios</h1>
-                <p class="ayuda izquierda">Usuarios registrados en el sistema y su estado.</p>
-            </div>
-            <a class="boton" data-ventana href="/administrador/usuarios/nuevo">Registrar usuario</a>
-        </div>
+                <?php require __DIR__ . '/partes/cabecera_pagina.php'; ?>
 
         <?php if ($aviso !== null): ?>
             <div class="aviso <?= $aviso['tipo'] === 'ok' ? 'ok' : 'error' ?>" role="status">

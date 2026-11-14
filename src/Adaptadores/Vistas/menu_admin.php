@@ -37,6 +37,10 @@ foreach ($semana->dias as $dia) {
 $completa = $conServicio > 0 && $conPlato === $conServicio;
 $porcentaje = $conServicio > 0 ? (int) round($conPlato * 100 / $conServicio) : 0;
 
+$enlacesVolver = [['Volver al panel', '/administrador']];
+$lunes = $semana->lunes;
+
+
 $lunes = $semana->lunes;
 $tituloBanner = 'Menú semanal';
 $ruta = '/administrador/menu';
@@ -44,7 +48,9 @@ $estadoSemana = ['texto' => $semana->publicado ? 'Publicado' : 'Sin publicar', '
 require __DIR__ . '/partes/encabezado.php';
 ?>
     <main class="pagina ancha">
+                <?php require __DIR__ . '/partes/volver.php'; ?>
         <?php require __DIR__ . '/partes/barra_semana.php'; ?>
+       
 
         <?php if ($aviso !== null): ?>
             <div class="aviso <?= $aviso['tipo'] === 'ok' ? 'ok' : 'error' ?>" role="status"><?= $h($aviso['texto']) ?></div>

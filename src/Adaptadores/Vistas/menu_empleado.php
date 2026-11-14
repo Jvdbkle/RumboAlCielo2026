@@ -22,6 +22,7 @@ foreach ($resultado->dias as $plato) {
     $platosPorFecha[$plato->fecha->format('Y-m-d')] = $plato;
 }
 
+$enlacesVolver = [['Volver al panel', '/empleado']];
 $lunes = $resultado->lunes;
 $tituloBanner = 'Menú de la semana';
 $ruta = '/empleado/menu';
@@ -29,6 +30,7 @@ $estadoSemana = $resultado->publicado ? ['texto' => 'Publicado', 'clase' => 'ok'
 require __DIR__ . '/partes/encabezado.php';
 ?>
     <main class="pagina ancha">
+                <?php require __DIR__ . '/partes/volver.php'; ?>
         <?php require __DIR__ . '/partes/barra_semana.php'; ?>
 
         <?php if (!$resultado->publicado): ?>

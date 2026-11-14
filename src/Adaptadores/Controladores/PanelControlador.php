@@ -65,7 +65,8 @@ final class PanelControlador extends ControladorBase
                 ['titulo' => 'Usuarios', 'descripcion' => 'Registrar, editar, deshabilitar y reincorporar usuarios.', 'ruta' => '/administrador/usuarios'],
                 ['titulo' => 'Menú semanal', 'descripcion' => 'Registrar los platos de cada día y publicar el menú de la semana.', 'ruta' => '/administrador/menu'],
                 ['titulo' => 'Feriados', 'descripcion' => 'Registrar los días sin atención del almuerzo.', 'ruta' => '/administrador/feriados'],
-            ],
+               ['titulo' => 'Pensiones', 'descripcion' => 'Confirmar, rechazar o revocar las pensiones mensuales.', 'ruta' => '/administrador/pensiones'],
+                ],
         ]);
     }
 
@@ -90,7 +91,8 @@ final class PanelControlador extends ControladorBase
             'galeriaEnlace' => 'Ver el menú completo',
             'modulos' => [
                 ['titulo' => 'Menú de la semana', 'descripcion' => 'Ver el menú de cada día con sus fotos.', 'ruta' => '/empleado/menu'],
-            ],
+                ['titulo' => 'Mis pensiones', 'descripcion' => 'Solicitar la pensión mensual y ver su estado.', 'ruta' => '/empleado/pensiones'],
+                ],
         ]);
     }
 

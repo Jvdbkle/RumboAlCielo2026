@@ -29,7 +29,9 @@ $iconos = [
     'Menú semanal' => '<path d="M7 3v8a2 2 0 0 0 2 2v8h2V3H9v6H8V3H7zm9 0c-1.7 0-3 2.2-3 5s1.3 5 3 5v8h2V3h-2z"/>',
     'Menú de la semana' => '<path d="M7 3v8a2 2 0 0 0 2 2v8h2V3H9v6H8V3H7zm9 0c-1.7 0-3 2.2-3 5s1.3 5 3 5v8h2V3h-2z"/>',
     'Feriados' => '<path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm-2 8h14v10H5V10z"/>',
-];
+    'Pensiones' => '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2H3V7zm0 4h18v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6zm13 2v2h3v-2h-3z"/>',
+    'Mis pensiones' => '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2H3V7zm0 4h18v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6zm13 2v2h3v-2h-3z"/>',
+    ];
 $colores = ['naranja', 'azul', 'verde', 'amarillo'];
 
 require __DIR__ . '/partes/encabezado.php';

@@ -8,21 +8,15 @@
  * @var array{tipo: string, texto: string}|null $aviso
  */
 $titulo = 'Familiares';
+$enlacesVolver = [['Volver al panel', '/administrador'], ['Volver a usuarios', '/administrador/usuarios']];
+$sobreTitulo = 'Administración';
+$tituloPagina = 'Familiares';
+$subtituloPagina = 'Empleado: ' . $empleado->nombres . ' ' . $empleado->apellidos;
+$accionPagina = ['texto' => 'Registrar familiar', 'href' => '/administrador/familiares/nuevo?empleado=' . $empleado->idUsuario, 'ventana' => true];
 require __DIR__ . '/partes/encabezado.php';
 ?>
     <main class="pagina">
-        <div class="encabezado-pagina">
-            <div>
-                <h1>Familiares</h1>
-                <p class="ayuda izquierda">
-                    Empleado: <?= htmlspecialchars($empleado->nombres . ' ' . $empleado->apellidos, ENT_QUOTES, 'UTF-8') ?>
-                </p>
-            </div>
-            <div class="acciones">
-                <a class="boton secundario" href="/administrador/usuarios">Volver a usuarios</a>
-               <a class="boton" data-ventana href="/administrador/familiares/nuevo?empleado=<?= $empleado->idUsuario ?>">Registrar familiar</a>
-            </div>
-        </div>
+                <?php require __DIR__ . '/partes/cabecera_pagina.php'; ?>
 
         <?php if ($aviso !== null): ?>
             <div class="aviso <?= $aviso['tipo'] === 'ok' ? 'ok' : 'error' ?>" role="status">

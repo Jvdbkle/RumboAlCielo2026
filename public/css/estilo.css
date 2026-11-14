@@ -606,7 +606,6 @@ button.chico {
     color: var(--gris);
 }
 /* ---------- Menú semanal ---------- */
-/* ---------- Menú semanal ---------- */
 .etiqueta.pendiente {
     background: #ffedd5;
     color: #9a3412;
@@ -1560,6 +1559,326 @@ button.miniatura:hover {
         margin-left: auto;
         margin-right: auto;
     }
+}
+
+
+
+/* ---------- Volver y cabecera de las pantallas de gestión ---------- */
+.volver {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-bottom: 14px;
+}
+
+.volver a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px 7px 12px;
+    color: var(--azul);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.volver a span {
+    display: inline-block;
+    transition: transform 0.18s ease;
+}
+
+.volver a:hover,
+.volver a:focus-visible {
+    color: #ffffff;
+    background: var(--acento);
+    border-color: var(--acento);
+}
+
+.volver a:hover span {
+    transform: translateX(-4px);
+}
+
+.boton-banner {
+    display: inline-block;
+    padding: 12px 24px;
+    color: var(--azul);
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.boton-banner:hover,
+.boton-banner:focus-visible {
+    color: #ffffff;
+    background: var(--acento);
+    transform: translateY(-2px);
+}
+
+/* Feriados */
+.resumen-feriados {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.titulo-grupo {
+    margin: 22px 0 12px;
+    color: var(--azul);
+    font-size: 1.1rem;
+}
+
+.feriados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+}
+
+.feriado-tarjeta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    animation: aparecer 0.5s ease both;
+    animation-delay: calc(var(--i) * 70ms);
+}
+
+.feriado-tarjeta:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-fuerte);
+}
+
+.feriado-tarjeta.pasado .tile-fecha,
+.feriado-tarjeta.pasado .feriado-info {
+    opacity: 0.7;
+}
+
+.tile-fecha {
+    flex: none;
+    width: 66px;
+    overflow: hidden;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(23, 38, 80, 0.16);
+}
+
+.tile-mes {
+    display: block;
+    padding: 3px 0;
+    color: #ffffff;
+    background: var(--acento);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.feriado-tarjeta.pasado .tile-mes {
+    background: var(--gris);
+}
+
+.tile-dia {
+    display: block;
+    padding: 4px 0 6px;
+    color: var(--azul);
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.feriado-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+}
+
+.feriado-info strong {
+    color: var(--azul);
+    font-size: 1.02rem;
+    word-break: break-word;
+}
+
+.feriado-info small {
+    color: var(--gris);
+}
+
+.vacio-grande {
+    max-width: 520px;
+    margin: 30px auto 0;
+    padding: 40px 28px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.88);
+    border-top: 5px solid var(--acento);
+    border-radius: 20px;
+    box-shadow: var(--sombra-suave);
+    animation: emerger 0.5s ease both;
+}
+
+.vacio-icono {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 3rem;
+}
+
+.vacio-grande h2 {
+    margin: 0 0 8px;
+    color: var(--azul);
+}
+
+.vacio-grande p {
+    margin: 0 0 20px;
+    color: var(--gris);
+}
+
+/* ---------- Pensiones ---------- */
+.vacio-simple {
+    margin: 0 0 8px;
+    padding: 16px 20px;
+    color: var(--gris);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px dashed var(--borde);
+    border-radius: 14px;
+}
+
+.pensiones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.pension-tarjeta {
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    animation: aparecer 0.5s ease both;
+    animation-delay: calc(var(--i) * 70ms);
+}
+
+.pension-tarjeta:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-fuerte);
+}
+
+.pension-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.pension-cabecera strong {
+    color: var(--azul);
+    font-size: 1.05rem;
+}
+
+.pension-detalle {
+    margin: 6px 0 14px;
+    color: var(--gris);
+    font-size: 0.88rem;
+}
+
+.contadores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.contadores div {
+    padding: 10px 12px;
+    text-align: center;
+    background: var(--azul-claro);
+    border-radius: 12px;
+}
+
+.contadores div:last-child {
+    background: var(--verde-claro);
+}
+
+.contadores b {
+    display: block;
+    color: var(--azul);
+    font-size: 1.5rem;
+    line-height: 1.1;
+}
+
+.contadores span {
+    color: var(--gris);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.opciones-titulo {
+    margin: 16px 0 8px;
+    color: var(--azul);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.opcion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 11px 14px;
+    background: rgba(249, 250, 251, 0.9);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 400;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.opcion:hover {
+    background: var(--azul-claro);
+    border-color: var(--azul);
+}
+
+.opcion input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    accent-color: var(--acento);
+    cursor: pointer;
+}
+
+.opcion span {
+    display: flex;
+    flex-direction: column;
+}
+
+.opcion strong {
+    color: var(--azul);
+}
+
+.opcion small {
+    color: var(--gris);
+    font-size: 0.8rem;
 }
 /* ---------- Animaciones ---------- */
 @keyframes aparecer {

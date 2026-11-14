@@ -44,6 +44,20 @@ use RumboAlCielo\Aplicacion\CasosDeUso\EditarPlato;
 use RumboAlCielo\Aplicacion\CasosDeUso\PublicarMenu;
 use RumboAlCielo\Aplicacion\CasosDeUso\RegistrarPlato;
 use RumboAlCielo\Infraestructura\Archivos\AlmacenFotosEnDisco;
+use RumboAlCielo\Adaptadores\Controladores\PensionAdminControlador;
+use RumboAlCielo\Adaptadores\Controladores\PensionEmpleadoControlador;
+use RumboAlCielo\Adaptadores\Repositorios\PensionRepositorioMySql;
+use RumboAlCielo\Adaptadores\Repositorios\ReservaRepositorioMySql;
+use RumboAlCielo\Aplicacion\CasosDeUso\ArmarFilasPension;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConfirmarPension;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarMisPensiones;
+use RumboAlCielo\Aplicacion\CasosDeUso\ListarPensiones;
+use RumboAlCielo\Aplicacion\CasosDeUso\RechazarPension;
+use RumboAlCielo\Aplicacion\CasosDeUso\RevocarPension;
+use RumboAlCielo\Aplicacion\CasosDeUso\SolicitarPension;
+
+
+
 
 // Cookie de sesión segura: no accesible desde JavaScript y no se envía desde otros sitios.
 ini_set('session.use_strict_mode', '1');
@@ -58,6 +72,8 @@ $roles = new RolRepositorioMySql($pdo);
 $familiares = new FamiliarRepositorioMySql($pdo);
 $feriados = new FeriadoRepositorioMySql($pdo);
 $menus = new MenuRepositorioMySql($pdo);
+$pensiones = new PensionRepositorioMySql($pdo);
+$reservas = new ReservaRepositorioMySql($pdo);
 $fotos = new AlmacenFotosEnDisco(__DIR__ . '/uploads/platos');
 $sesion = new SesionPhp();
 
@@ -113,6 +129,22 @@ $gestionPlatos = new PlatoControlador(
     new PublicarMenu($menus, $feriados),
 );
 $menuDelEmpleado = new MenuControlador($guardia, new ConsultarMenu($menus));
+$armarFilasPension = new ArmarFilasPension($personas, $usuarios, $reservas);
+$pensionesAdmin = new PensionAdminControlador(
+    $guardia,
+    new ListarPensiones($pensiones, $armarFilasPension),
+    new ConfirmarPension($pensiones),
+    new RechazarPension($pensiones),
+    new RevocarPension($pensiones, $reservas),
+);
+$pensionesEmpleado = new PensionEmpleadoControlador(
+    $guardia,
+    $sesion,
+    new ConsultarUsuario($usuarios, $personas),
+    new ListarFamiliares($familiares, $personas),
+    new ConsultarMisPensiones($pensiones, $armarFilasPension),
+    new SolicitarPension($pensiones, $familiares, $usuarios, $personas),
+);
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -214,6 +246,33 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'GET /empleado/menu':
         $menuDelEmpleado->mostrar();
+        break;
+            case 'GET /administrador/pensiones':
+        $pensionesAdmin->listar();
+        break;
+    case 'POST /administrador/pensiones/confirmar':
+        $pensionesAdmin->confirmar();
+        break;
+    case 'POST /administrador/pensiones/rechazar':
+        $pensionesAdmin->rechazar();
+        break;
+    case 'GET /administrador/pensiones/revocar':
+        $pensionesAdmin->mostrarConfirmacion();
+        break;
+    case 'POST /administrador/pensiones/revocar':
+        $pensionesAdmin->revocar();
+        break;
+    case 'GET /empleado/menu':
+        $menuDelEmpleado->mostrar();
+        break;
+    case 'GET /empleado/pensiones':
+        $pensionesEmpleado->listar();
+        break;
+    case 'GET /empleado/pensiones/solicitar':
+        $pensionesEmpleado->mostrarSolicitud();
+        break;
+    case 'POST /empleado/pensiones/solicitar':
+        $pensionesEmpleado->solicitar();
         break;
     default:
         http_response_code(404);

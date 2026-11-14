@@ -141,7 +141,12 @@ final class Reserva
             && hash_equals($this->codigoQR, $codigo)
             && $this->fecha->format('Y-m-d') === Reloj::ahora()->format('Y-m-d');
     }
-
+        /** HU-10 criterio 1: al revocarse la pensión, la reserva queda como reserva normal a 18 Bs. */
+    public function volverADiaria(): void
+    {
+        $this->modalidad = Modalidad::Diaria;
+        $this->tarifa = self::TARIFA_DIARIA;
+    }
     /** HU-20 criterio 3: avisa al administrador (lo despacha la aplicación). */
     public function notificarAdministrador(): void
     {
