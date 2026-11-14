@@ -112,7 +112,7 @@ $gestionFamiliares = new FamiliarControlador(
     new RegistrarFamiliar($familiares, $personas, $usuarios, $roles),
     new ConsultarFamiliar($familiares, $personas),
     new EditarFamiliar($familiares, $personas),
-    new EliminarFamiliar($familiares),
+        new EliminarFamiliar($familiares, $reservas),
 );
 
 $gestionFeriados = new FeriadoControlador(

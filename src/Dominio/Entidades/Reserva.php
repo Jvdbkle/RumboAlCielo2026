@@ -118,7 +118,11 @@ final class Reserva
         }
         $this->estado = EstadoReserva::Cancelada;
     }
-
+    /** HU-07 criterio 2: indica si la reserva todavía puede anularse sin cobro (confirmada y antes del corte). */
+    public function puedeCancelarse(): bool
+    {
+        return $this->estado === EstadoReserva::Confirmada && $this->antesDelCorte();
+    }
     /** HU-22 criterios 1 y 2. */
     public function marcarEntregada(): void
     {

@@ -287,7 +287,7 @@ final class ReservarAlmuerzoTest extends TestCase
     /** HU-17 criterio 2: al elegir a la persona solo aparecen el empleado y sus familiares activos. */
     public function test_solo_se_ofrecen_los_familiares_activos_del_propio_empleado(): void
     {
-        (new EliminarFamiliar($this->familiares))->ejecutar($this->idPedro, true);
+        (new EliminarFamiliar($this->familiares, $this->reservas))->ejecutar($this->idPedro, true);
 
         $filas = (new ListarFamiliares($this->familiares, $this->personas))->ejecutar(self::EMPLEADO);
 
@@ -308,7 +308,7 @@ final class ReservarAlmuerzoTest extends TestCase
     /** HU-17 criterio 3: un familiar eliminado tampoco se puede reservar. */
     public function test_rechaza_reservar_para_un_familiar_eliminado(): void
     {
-        (new EliminarFamiliar($this->familiares))->ejecutar($this->idPedro, true);
+        (new EliminarFamiliar($this->familiares, $this->reservas))->ejecutar($this->idPedro, true);
 
         $mensaje = $this->mensajeDeRechazo(
             fn () => $this->reservar->ejecutar(self::EMPLEADO, true, [$this->idPedro], $this->dia(self::LUNES))

@@ -17,6 +17,7 @@ use RumboAlCielo\Tests\Dobles\PersonaRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\RolRepositorioEnMemoria;
 use RumboAlCielo\Tests\Dobles\UsuarioRepositorioEnMemoria;
 use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarFamiliar;
+use RumboAlCielo\Tests\Dobles\ReservaRepositorioEnMemoria;
 
 /** HU-04 Gestión de Familiares y HU-07 Eliminar un familiar (criterios 1 y 3). */
 final class GestionFamiliaresTest extends TestCase
@@ -127,7 +128,7 @@ final class GestionFamiliaresTest extends TestCase
     {
         $id = $this->registrarFamiliar->ejecutar(self::EMPLEADO_ID, 'María', 'López', 'conyuge');
 
-        $eliminado = (new EliminarFamiliar($this->familiares))->ejecutar($id, true);
+        $eliminado = (new EliminarFamiliar($this->familiares, new ReservaRepositorioEnMemoria()))->ejecutar($id, true);
 
         $this->assertTrue($eliminado);
         $this->assertSame(0, count($this->listarFamiliares->ejecutar(self::EMPLEADO_ID)));
@@ -140,7 +141,7 @@ final class GestionFamiliaresTest extends TestCase
     {
         $id = $this->registrarFamiliar->ejecutar(self::EMPLEADO_ID, 'María', 'López', 'conyuge');
 
-        $eliminado = (new EliminarFamiliar($this->familiares))->ejecutar($id, false);
+        $eliminado = (new EliminarFamiliar($this->familiares, new ReservaRepositorioEnMemoria()))->ejecutar($id, false);
 
         $this->assertFalse($eliminado);
         $this->assertSame(1, count($this->listarFamiliares->ejecutar(self::EMPLEADO_ID)));
@@ -172,7 +173,7 @@ final class GestionFamiliaresTest extends TestCase
     public function test_no_consulta_un_familiar_eliminado(): void
     {
         $id = $this->registrarFamiliar->ejecutar(self::EMPLEADO_ID, 'Luis', 'Pérez', 'hijo');
-        (new EliminarFamiliar($this->familiares))->ejecutar($id, true);
+        (new EliminarFamiliar($this->familiares, new ReservaRepositorioEnMemoria()))->ejecutar($id, true);
 
         try {
             (new ConsultarFamiliar($this->familiares, $this->personas))->ejecutar($id);
