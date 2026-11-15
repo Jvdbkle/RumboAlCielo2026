@@ -39,21 +39,21 @@ final class PanelControlador extends ControladorBase
         $registrados = 0;
         $sinAtencion = 0;
         $galeria = [];
-        foreach ($semana->dias as $dia) {
+                foreach ($semana->dias as $dia) {
+            if ($dia->motivoFeriado !== null) {
+                $sinAtencion++;
+                continue;
+            }
             if ($dia->plato !== null) {
                 $registrados++;
                 $galeria[] = $this->tarjetaDelDia($dia->fecha, $dia->plato->sopa, $dia->plato->platoPrincipal, $dia->plato->fotoSopa, $dia->plato->fotoPlatoPrincipal, $hoy);
-            }
-            if ($dia->motivoFeriado !== null) {
-                $sinAtencion++;
             }
         }
 
         $this->render('panel', $this->datosComunes($hoy, 'Panel de administración', 'Administrador') + [
             'mensaje' => 'Gestiona usuarios, familiares, el menú y los días sin atención desde un solo lugar.',
             'estadisticas' => [
-                ['Platos registrados', $registrados . ' de 4', 'naranja'],
-                ['Menú de la semana', $semana->publicado ? 'Publicado' : 'Sin publicar', $semana->publicado ? 'verde' : 'amarillo'],
+                ['Platos registrados', $registrados . ' de ' . (4 - $sinAtencion), 'naranja'],                ['Menú de la semana', $semana->publicado ? 'Publicado' : 'Sin publicar', $semana->publicado ? 'verde' : 'amarillo'],
                 ['Días sin atención', (string) $sinAtencion, 'azul'],
             ],
             'galeriaTitulo' => 'Platos de esta semana',
