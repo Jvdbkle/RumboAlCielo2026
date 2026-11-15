@@ -6,6 +6,7 @@ namespace RumboAlCielo\Dominio\Entidades;
 
 use DateTimeImmutable;
 use RumboAlCielo\Dominio\Enumeraciones\EstadoLiquidacion;
+use RumboAlCielo\Dominio\Enumeraciones\Modalidad;
 use RumboAlCielo\Dominio\Excepciones\ReglaDeNegocioException;
 
 final class Liquidacion
@@ -82,16 +83,36 @@ final class Liquidacion
         return $total;
     }
 
-    /** HU-27 criterios 1 y 2: solo con el mes cerrado. Devuelve las filas en texto separado por ";". */
-    public function exportarPlanilla(): string
+    /** Suma de lo que se descuenta a todos los empleados en el mes. */
+    public function totalGeneral(): float
+    {
+        return array_sum(array_map(fn (DetalleLiquidacion $d) => $d->getTotal(), $this->detalles));
+    }
+
+    /** HU-27 criterio 2: la planilla solo se exporta con el mes cerrado. */
+    public function exigirCerrada(): void
     {
         if ($this->estado !== EstadoLiquidacion::Cerrada) {
             throw new ReglaDeNegocioException('Primero debe cerrarse el mes para exportar la planilla.');
         }
-        $filas = ['COD;MOD;CANT;TOT'];
+    }
+
+    /**
+     * HU-26 criterio 4 y HU-27 criterio 1: una fila por empleado titular y modalidad, con la
+     * cantidad de almuerzos y el total a descontar (incluye a sus familiares).
+     *
+     * @return list<array{idUsuario: int, modalidad: Modalidad, cantidad: int, total: float}>
+     */
+    public function consolidadoPorTitular(): array
+    {
+        $filas = [];
         foreach ($this->detalles as $d) {
-            $filas[] = implode(';', [$d->getIdPersona(), $d->getModalidad()->value, $d->getCantidad(), number_format($d->getTotal(), 2, '.', '')]);
+            $clave = $d->getIdUsuario() . '|' . $d->getModalidad()->value;
+            $filas[$clave] ??= ['idUsuario' => $d->getIdUsuario(), 'modalidad' => $d->getModalidad(), 'cantidad' => 0, 'total' => 0.0];
+            $filas[$clave]['cantidad'] += $d->getCantidad();
+            $filas[$clave]['total'] += $d->getTotal();
         }
-        return implode("\n", $filas);
+        ksort($filas, SORT_NATURAL);
+        return array_values($filas);
     }
 }

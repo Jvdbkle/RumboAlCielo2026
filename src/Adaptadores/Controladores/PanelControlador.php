@@ -65,8 +65,14 @@ final class PanelControlador extends ControladorBase
                 ['titulo' => 'Usuarios', 'descripcion' => 'Registrar, editar, deshabilitar y reincorporar usuarios.', 'ruta' => '/administrador/usuarios'],
                 ['titulo' => 'Menú semanal', 'descripcion' => 'Registrar los platos de cada día y publicar el menú de la semana.', 'ruta' => '/administrador/menu'],
                 ['titulo' => 'Feriados', 'descripcion' => 'Registrar los días sin atención del almuerzo.', 'ruta' => '/administrador/feriados'],
-               ['titulo' => 'Pensiones', 'descripcion' => 'Confirmar, rechazar o revocar las pensiones mensuales.', 'ruta' => '/administrador/pensiones'],
-                ],
+                ['titulo' => 'Pensiones', 'descripcion' => 'Confirmar, rechazar o revocar las pensiones mensuales.', 'ruta' => '/administrador/pensiones'],
+                ['titulo' => 'Reservas', 'descripcion' => 'Consultar las reservas por fecha, rango o empleado.', 'ruta' => '/administrador/reservas'],
+                ['titulo' => 'Mostrador de entrega', 'descripcion' => 'Validar el código QR y registrar la entrega del almuerzo.', 'ruta' => '/administrador/mostrador'],
+                ['titulo' => 'Tablero del día', 'descripcion' => 'Ver los indicadores del servicio de hoy de un vistazo.', 'ruta' => '/administrador/tablero'],
+                ['titulo' => 'Lista del día', 'descripcion' => 'Imprimir la lista de almuerzos con casillas de control.', 'ruta' => '/administrador/lista-diaria'],
+                ['titulo' => 'Exportar reservas', 'descripcion' => 'Descargar las reservas de un rango en CSV o Excel.', 'ruta' => '/administrador/reservas/exportar'],
+                ['titulo' => 'Liquidación mensual', 'descripcion' => 'Calcular el descuento por empleado y exportar la planilla.', 'ruta' => '/administrador/liquidacion'],
+               ],
         ]);
     }
 

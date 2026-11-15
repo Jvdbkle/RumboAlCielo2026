@@ -60,7 +60,19 @@ use RumboAlCielo\Aplicacion\CasosDeUso\CancelarReserva;
 use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarCalendarioReservas;
 use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarMisCodigosQR;
 use RumboAlCielo\Aplicacion\CasosDeUso\ReservarAlmuerzo;
-
+use RumboAlCielo\Adaptadores\Controladores\ReporteControlador;
+use RumboAlCielo\Adaptadores\Controladores\ReservaAdminControlador;
+use RumboAlCielo\Adaptadores\Repositorios\LiquidacionRepositorioMySql;
+use RumboAlCielo\Aplicacion\CasosDeUso\CerrarLiquidacion;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarLiquidacion;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarReservasAdmin;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarTablero;
+use RumboAlCielo\Aplicacion\CasosDeUso\EmitirListaDiaria;
+use RumboAlCielo\Aplicacion\CasosDeUso\ExportarPlanilla;
+use RumboAlCielo\Aplicacion\CasosDeUso\ExportarReservas;
+use RumboAlCielo\Aplicacion\CasosDeUso\GenerarLiquidacion;
+use RumboAlCielo\Aplicacion\CasosDeUso\ValidarEntrega;
+use RumboAlCielo\Infraestructura\Excel\GeneradorXlsx;
 
 
 // Cookie de sesión segura: no accesible desde JavaScript y no se envía desde otros sitios.
@@ -78,6 +90,8 @@ $feriados = new FeriadoRepositorioMySql($pdo);
 $menus = new MenuRepositorioMySql($pdo);
 $pensiones = new PensionRepositorioMySql($pdo);
 $reservas = new ReservaRepositorioMySql($pdo);
+$liquidaciones = new LiquidacionRepositorioMySql($pdo);
+$hojasDeCalculo = new GeneradorXlsx();
 $fotos = new AlmacenFotosEnDisco(__DIR__ . '/uploads/platos');
 $sesion = new SesionPhp();
 
@@ -158,6 +172,22 @@ $reservasEmpleado = new ReservaEmpleadoControlador(
     new ReservarAlmuerzo($reservas, $pensiones, $familiares, $usuarios, $personas, $menus, $feriados),
     new CancelarReserva($reservas, $personas),
     new ConsultarMisCodigosQR($reservas, $personas),
+);
+$reservasAdmin = new ReservaAdminControlador(
+    $guardia,
+    new ConsultarReservasAdmin($reservas, $personas, $usuarios),
+    new ListarUsuarios($usuarios, $personas, $roles),
+    new ValidarEntrega($reservas, $personas),
+);
+$reportes = new ReporteControlador(
+    $guardia,
+    new ConsultarTablero($usuarios, $roles, $menus, $reservas),
+    new EmitirListaDiaria($reservas, $personas, $usuarios),
+    new ExportarReservas($reservas, $personas, $menus, $hojasDeCalculo),
+    new GenerarLiquidacion($reservas, $pensiones, $liquidaciones),
+    new CerrarLiquidacion($liquidaciones),
+    new ConsultarLiquidacion($liquidaciones, $personas, $usuarios),
+    new ExportarPlanilla($liquidaciones, $usuarios, $personas, $hojasDeCalculo),
 );
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -303,6 +333,36 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'GET /empleado/qr':
         $reservasEmpleado->codigosQr();
+        break;
+            case 'GET /administrador/reservas':
+        $reservasAdmin->consultar();
+        break;
+    case 'GET /administrador/mostrador':
+        $reservasAdmin->mostrador();
+        break;
+    case 'POST /administrador/mostrador/validar':
+        $reservasAdmin->validar();
+        break;
+    case 'GET /administrador/tablero':
+        $reportes->tablero();
+        break;
+    case 'GET /administrador/lista-diaria':
+        $reportes->listaDiaria();
+        break;
+    case 'GET /administrador/reservas/exportar':
+        $reportes->exportarReservas();
+        break;
+    case 'GET /administrador/liquidacion':
+        $reportes->liquidacion();
+        break;
+    case 'POST /administrador/liquidacion/generar':
+        $reportes->generar();
+        break;
+    case 'POST /administrador/liquidacion/cerrar':
+        $reportes->cerrar();
+        break;
+    case 'GET /administrador/liquidacion/planilla':
+        $reportes->planilla();
         break;
     default:
         http_response_code(404);

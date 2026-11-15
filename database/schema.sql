@@ -93,3 +93,23 @@ CREATE TABLE reserva (
     CONSTRAINT fk_reserva_usuario FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
     CONSTRAINT fk_reserva_plato FOREIGN KEY (idPlato) REFERENCES plato(idPlato)
 );
+CREATE TABLE  liquidacion (
+    idLiquidacion INT AUTO_INCREMENT PRIMARY KEY,
+    mes DATE NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'Generada',
+    UNIQUE KEY uq_liquidacion_mes (mes)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE  detalle_liquidacion (
+    idDetalle INT AUTO_INCREMENT PRIMARY KEY,
+    idLiquidacion INT NOT NULL,
+    idPersona INT NOT NULL,
+    idUsuario INT NOT NULL,
+    modalidad VARCHAR(20) NOT NULL,
+    cantidad INT NOT NULL,
+    penalidad DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0,
+    INDEX idx_detalle_liquidacion (idLiquidacion),
+    CONSTRAINT fk_detalle_liquidacion FOREIGN KEY (idLiquidacion)
+        REFERENCES liquidacion (idLiquidacion) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
