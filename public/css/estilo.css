@@ -1405,6 +1405,11 @@ button.miniatura:hover {
 .plato-card.es-hoy {
     outline: 3px solid var(--acento);
 }
+.plato-card-feriado .dia-feriado {
+    flex: 1;
+    justify-content: center;
+    border-radius: 0;
+}
 
 .plato-fotos {
     position: relative;

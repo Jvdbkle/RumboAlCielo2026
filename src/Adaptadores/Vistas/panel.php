@@ -17,13 +17,17 @@
  */
 $h = fn (string $texto): string => htmlspecialchars($texto, ENT_QUOTES, 'UTF-8');
 $destacada = null;
+$primera = null;
 foreach ($galeria as $tarjeta) {
+    if (!empty($tarjeta['feriado'])) {
+        continue;
+    }
+    $primera ??= $tarjeta;
     if ($tarjeta['hoy']) {
         $destacada = $tarjeta;
     }
 }
-$destacada ??= $galeria[0] ?? null;
-
+$destacada ??= $primera;
 $iconos = [
     'Usuarios' => '<path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0zM4 20c0-3.3 3.6-5 8-5s8 1.7 8 5v1H4v-1z"/>',
     'Menú semanal' => '<path d="M7 3v8a2 2 0 0 0 2 2v8h2V3H9v6H8V3H7zm9 0c-1.7 0-3 2.2-3 5s1.3 5 3 5v8h2V3h-2z"/>',
@@ -97,6 +101,18 @@ require __DIR__ . '/partes/encabezado.php';
             <?php else: ?>
                 <div class="galeria">
                     <?php foreach ($galeria as $tarjeta): ?>
+                                                <?php if (!empty($tarjeta['feriado'])): ?>
+                            <a class="plato-card plato-card-feriado <?= $tarjeta['hoy'] ? 'es-hoy' : '' ?>" href="<?= $h($galeriaRuta) ?>">
+                                <div class="dia-feriado">
+                                    <strong>Sin atención</strong>
+                                    <span><?= $h((string) $tarjeta['motivo']) ?></span>
+                                </div>
+                                <div class="plato-info">
+                                    <span class="plato-dia"><?= $h((string) $tarjeta['dia']) ?> <?= $h((string) $tarjeta['fecha']) ?></span>
+                                </div>
+                            </a>
+                            <?php continue; ?>
+                        <?php endif; ?>
                         <a class="plato-card <?= $tarjeta['hoy'] ? 'es-hoy' : '' ?>" href="<?= $h($galeriaRuta) ?>">
                             <div class="plato-fotos">
                                 <img src="/uploads/platos/<?= $h((string) $tarjeta['fotoPrincipal']) ?>" alt="Plato principal">

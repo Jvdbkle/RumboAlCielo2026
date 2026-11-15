@@ -40,8 +40,15 @@ final class PanelControlador extends ControladorBase
         $sinAtencion = 0;
         $galeria = [];
                 foreach ($semana->dias as $dia) {
-            if ($dia->motivoFeriado !== null) {
+                       if ($dia->motivoFeriado !== null) {
                 $sinAtencion++;
+                $galeria[] = [
+                    'feriado' => true,
+                    'dia' => self::DIAS[(int) $dia->fecha->format('N')],
+                    'fecha' => $dia->fecha->format('d/m'),
+                    'motivo' => $dia->motivoFeriado,
+                    'hoy' => $dia->fecha->format('Y-m-d') === $hoy->format('Y-m-d'),
+                ];
                 continue;
             }
             if ($dia->plato !== null) {
