@@ -92,6 +92,8 @@ final class PanelControlador extends ControladorBase
             'modulos' => [
                 ['titulo' => 'Menú de la semana', 'descripcion' => 'Ver el menú de cada día con sus fotos.', 'ruta' => '/empleado/menu'],
                 ['titulo' => 'Mis pensiones', 'descripcion' => 'Solicitar la pensión mensual y ver su estado.', 'ruta' => '/empleado/pensiones'],
+                ['titulo' => 'Mis reservas', 'descripcion' => 'Reservar y cancelar tus almuerzos y los de tus familiares.', 'ruta' => '/empleado/reservas'],
+                ['titulo' => 'Mi código QR', 'descripcion' => 'Mostrar el código para retirar tu almuerzo de hoy.', 'ruta' => '/empleado/qr'],
                 ],
         ]);
     }

@@ -55,7 +55,11 @@ use RumboAlCielo\Aplicacion\CasosDeUso\ListarPensiones;
 use RumboAlCielo\Aplicacion\CasosDeUso\RechazarPension;
 use RumboAlCielo\Aplicacion\CasosDeUso\RevocarPension;
 use RumboAlCielo\Aplicacion\CasosDeUso\SolicitarPension;
-
+use RumboAlCielo\Adaptadores\Controladores\ReservaEmpleadoControlador;
+use RumboAlCielo\Aplicacion\CasosDeUso\CancelarReserva;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarCalendarioReservas;
+use RumboAlCielo\Aplicacion\CasosDeUso\ConsultarMisCodigosQR;
+use RumboAlCielo\Aplicacion\CasosDeUso\ReservarAlmuerzo;
 
 
 
@@ -144,6 +148,16 @@ $pensionesEmpleado = new PensionEmpleadoControlador(
     new ListarFamiliares($familiares, $personas),
     new ConsultarMisPensiones($pensiones, $armarFilasPension),
     new SolicitarPension($pensiones, $familiares, $usuarios, $personas),
+);
+$reservasEmpleado = new ReservaEmpleadoControlador(
+    $guardia,
+    $sesion,
+    new ConsultarUsuario($usuarios, $personas),
+    new ListarFamiliares($familiares, $personas),
+    new ConsultarCalendarioReservas($reservas, $personas, $feriados, $menus),
+    new ReservarAlmuerzo($reservas, $pensiones, $familiares, $usuarios, $personas, $menus, $feriados),
+    new CancelarReserva($reservas, $personas),
+    new ConsultarMisCodigosQR($reservas, $personas),
 );
 // Se lee qué página pidió el navegador y se la dirige a su controlador.
 $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -262,9 +276,7 @@ switch ($metodo . ' ' . $ruta) {
     case 'POST /administrador/pensiones/revocar':
         $pensionesAdmin->revocar();
         break;
-    case 'GET /empleado/menu':
-        $menuDelEmpleado->mostrar();
-        break;
+    
     case 'GET /empleado/pensiones':
         $pensionesEmpleado->listar();
         break;
@@ -273,6 +285,24 @@ switch ($metodo . ' ' . $ruta) {
         break;
     case 'POST /empleado/pensiones/solicitar':
         $pensionesEmpleado->solicitar();
+        break;
+            case 'GET /empleado/reservas':
+        $reservasEmpleado->calendario();
+        break;
+    case 'GET /empleado/reservas/reservar':
+        $reservasEmpleado->mostrarReserva();
+        break;
+    case 'POST /empleado/reservas/reservar':
+        $reservasEmpleado->reservar();
+        break;
+    case 'GET /empleado/reservas/cancelar':
+        $reservasEmpleado->mostrarCancelacion();
+        break;
+    case 'POST /empleado/reservas/cancelar':
+        $reservasEmpleado->cancelar();
+        break;
+    case 'GET /empleado/qr':
+        $reservasEmpleado->codigosQr();
         break;
     default:
         http_response_code(404);
